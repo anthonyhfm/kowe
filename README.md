@@ -30,7 +30,10 @@ Compose WebView currently only supports Android and iOS but I am also working on
 Implementations:
 | Android | iOS | Desktop | Web |
 | ------- | --- | ------- | --- |
-| android.webkit | WKWebView | *Currently not supported* | *Currently not supported* |
+| android.webkit | WKWebView | [***Jetbrains Runtime, KCEF***](https://github.com/JetBrains/JetBrainsRuntime?tab=readme-ov-file#why-use-jetbrains-runtime) | *Currently not supported* |
+
+> [!NOTE]
+> In order to use the **Compose WebView Library** in a Compose for Desktop Application you need to run your application with a JCEF build of the [**JetBrains Runtime**](https://github.com/JetBrains/JetBrainsRuntime). You also need to do some additional adjustment to your gradle setup for [***KCEF***](https://github.com/DatL4g/KCEF/blob/master/COMPOSE.md#flags) 
 
 ---
 
