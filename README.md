@@ -1,6 +1,6 @@
 # Compose WebView
 
-The **Compose WebView Library** enables you to include native WebViews into your **Compose Multiplatform** App.
+The **Compose WebView Library** allows you to integrate WebViews into your **Compose Multiplatform** app, providing access to native WebView components on each platform, such as `android.webkit` for Android and `WKWebView` for iOS. This enables you to seamlessly display web content within your app, using the native WebView implementations of each platform to ensure optimal performance and user experience.
 
 ## Usage
 
