@@ -2,33 +2,72 @@ package dev.anthonyhfm.compose.web.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import dev.anthonyhfm.compose.web.data.WebLoadingState
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import androidx.compose.runtime.rememberCoroutineScope
+import dev.anthonyhfm.compose.web.data.URLPolicy
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.readValue
+import platform.CoreGraphics.CGRectZero
+import platform.Foundation.NSURL
+import platform.Foundation.NSURLRequest
+import platform.WebKit.WKWebView
+import platform.WebKit.WKWebViewConfiguration
 
-class AppleWebViewState(
-    override val url: String
-) : WebViewState {
-    override val loading: SharedFlow<WebLoadingState> = MutableSharedFlow()
+@OptIn(ExperimentalForeignApi::class)
+class AppleWebViewState : WebViewState {
+    var wkWebView: WKWebView
 
-    override fun loadUrl(url: String) {
-        TODO("Not yet implemented")
+    override val title: String?
+        get() = wkWebView.title()
+
+    override var policy: URLPolicy? = null
+
+    init {
+        val configuration = WKWebViewConfiguration()
+
+        wkWebView = WKWebView(frame = CGRectZero.readValue(), configuration = configuration)
     }
 
-    override fun loadHtml(html: String) {
-        TODO("Not yet implemented")
+    override fun evaluateJavaScript(js: String) {
+        wkWebView.evaluateJavaScript(javaScriptString = js, null)
+    }
+
+    override fun navigateUrl(url: String) {
+        location.value = url
+
+        wkWebView.loadRequest(NSURLRequest(NSURL(string = url)))
+    }
+
+    override fun navigateHtml(html: String) {
+        location.value = null
+
+        wkWebView.loadHTMLString(string = html, baseURL = null)
     }
 
     override fun reload() {
-        TODO("Not yet implemented")
+        wkWebView.reload()
     }
+}
+
+@Composable
+actual fun rememberWebViewState(html: String?): WebViewState {
+    val state = remember {
+        AppleWebViewState()
+    }
+
+    if (html != null) {
+        state.navigateHtml(html)
+    }
+
+    return state
 }
 
 @Composable
 actual fun rememberWebViewState(url: String): WebViewState {
     val state = remember {
-        AppleWebViewState(url)
+        AppleWebViewState()
     }
+
+    state.navigateUrl(url)
 
     return state
 }

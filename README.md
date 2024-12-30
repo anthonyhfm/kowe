@@ -1,6 +1,6 @@
 # Compose WebView
 
-The **Compose WebView Library** allows you to integrate WebViews into your **Compose Multiplatform** app, providing access to native WebView components on each platform, such as `android.webkit` for Android and `WKWebView` for iOS. This enables you to seamlessly display web content within your app, using the native WebView implementations of each platform to ensure optimal performance and user experience.
+The **Compose WebView Library** allows you to integrate WebViews into your **Compose Multiplatform** app, providing access to native WebView components on each platform, such as `android.webkit` for Android and `WKWebView` for iOS. This enables you to seamlessly display web content within your app, using the native WebView implementations of each platform with a unified API to ensure optimal performance and a great user and developer experience.
 
 ## Usage
 
@@ -9,6 +9,41 @@ The **Compose WebView Library** allows you to integrate WebViews into your **Com
 ***To be done ⚠️***
 
 ### Using the WebView Component
+
+#### Desktop Setup
+
+For using the Compose WebView Library in your Compose for Desktop Application you need to do some specific adjustments.
+
+As seen in the example down below, you will need to go to the root of your Desktop Application and initialize the Web Core. You will also need to only render WebView-States and WebView Composables when the initialization is done.
+This is due to [***KCEF***](https://github.com/DatL4g/KCEF) running the Chromium Engine on Desktop. It takes a little time to start and can not be accessed while initializing.
+
+```kotlin
+fun main() = application {
+    Window(
+        onCloseRequest = ::exitApplication,
+        title = "Compose WebView",
+    ) {
+        // Initializing the Chromium WebView
+        LaunchedEffect(Unit) {
+            WebViewCore.init()
+        }
+  
+        // Only display WebView implementations and state initializations when Chromium initialized
+        if (WebViewCore.initialized.value) {
+            App()
+        }
+    }
+}
+```
+
+> [!NOTE]
+> You will also need the newest version of the [JetBrains Runtime with JCEF](https://github.com/JetBrains/JetBrainsRuntime/releases) and follow the KCEF specific [gradle setup](https://github.com/DatL4g/KCEF/blob/master/COMPOSE.md#flags) instructions. 
+
+---
+
+#### General Usage
+
+To use the WebView component you need to create a WebViewState and the Composable itself. Here is a small example:
 
 ```kotlin
 @Composable

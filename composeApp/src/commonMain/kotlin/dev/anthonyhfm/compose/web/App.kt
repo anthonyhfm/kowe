@@ -6,10 +6,11 @@ import androidx.compose.ui.Modifier
 
 import dev.anthonyhfm.compose.web.ui.rememberWebViewState
 import dev.anthonyhfm.compose.web.ui.WebView
+import kotlinx.coroutines.delay
 
 @Composable
 fun App() {
-    val state = rememberWebViewState(url = "https://example.com")
+    val state = rememberWebViewState("https://www.jetbrains.com/compose-multiplatform/")
 
     WebView(
         state = state,

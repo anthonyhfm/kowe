@@ -14,7 +14,7 @@ actual fun WebView(
 ) {
     AndroidView(
         factory = {
-            WebView(it).apply {
+            (state as AndroidWebViewState).webkit.apply {
                 layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
@@ -22,9 +22,6 @@ actual fun WebView(
 
                 webViewClient = WebViewClient()
             }
-        },
-        update = {
-            it.loadUrl(state.url)
         },
         modifier = modifier
     )
