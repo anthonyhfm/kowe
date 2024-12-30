@@ -1,6 +1,8 @@
 package dev.anthonyhfm.compose.web.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import dev.anthonyhfm.compose.web.data.URLPolicy
@@ -16,8 +18,7 @@ import platform.WebKit.WKWebViewConfiguration
 class AppleWebViewState : WebViewState {
     var wkWebView: WKWebView
 
-    override val title: String?
-        get() = wkWebView.title()
+    override val title: MutableState<String?> = mutableStateOf(null)
 
     override var policy: URLPolicy? = null
 
@@ -49,7 +50,10 @@ class AppleWebViewState : WebViewState {
 }
 
 @Composable
-actual fun rememberWebViewState(html: String?): WebViewState {
+actual fun rememberWebViewState(
+    html: String?,
+    urlPolicy: URLPolicy?,
+): WebViewState {
     val state = remember {
         AppleWebViewState()
     }
@@ -62,7 +66,10 @@ actual fun rememberWebViewState(html: String?): WebViewState {
 }
 
 @Composable
-actual fun rememberWebViewState(url: String): WebViewState {
+actual fun rememberWebViewState(
+    url: String,
+    urlPolicy: URLPolicy?,
+): WebViewState {
     val state = remember {
         AppleWebViewState()
     }

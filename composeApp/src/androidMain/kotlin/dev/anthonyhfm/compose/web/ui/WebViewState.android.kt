@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import android.webkit.WebView
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import dev.anthonyhfm.compose.web.data.URLPolicy
@@ -13,9 +15,9 @@ class AndroidWebViewState(
 ) : WebViewState {
     var webkit: WebView = WebView(context)
 
-    override val title: String?
+    override val title: MutableState<String?>
         get() {
-            return webkit.title
+            return mutableStateOf(webkit.title)
         }
 
     override var policy: URLPolicy? = null
@@ -44,7 +46,10 @@ class AndroidWebViewState(
 }
 
 @Composable
-actual fun rememberWebViewState(html: String?): WebViewState {
+actual fun rememberWebViewState(
+    html: String?,
+    urlPolicy: URLPolicy?,
+): WebViewState {
     val context = LocalContext.current
     val state = remember {
         AndroidWebViewState(context)
@@ -58,7 +63,10 @@ actual fun rememberWebViewState(html: String?): WebViewState {
 }
 
 @Composable
-actual fun rememberWebViewState(url: String): WebViewState {
+actual fun rememberWebViewState(
+    url: String,
+    urlPolicy: URLPolicy?,
+): WebViewState {
     val context = LocalContext.current
     val state = remember {
         AndroidWebViewState(context)

@@ -14,7 +14,7 @@ interface WebViewState {
 
     var policy: URLPolicy?
 
-    val title: String?
+    val title: MutableState<String?>
 
     /**
      * Injects a javascript script in your webview.
@@ -26,7 +26,13 @@ interface WebViewState {
 }
 
 @Composable
-expect fun rememberWebViewState(url: String) : WebViewState
+expect fun rememberWebViewState(
+    html: String? = null,
+    urlPolicy: URLPolicy? = null,
+) : WebViewState
 
 @Composable
-expect fun rememberWebViewState(html: String? = null) : WebViewState
+expect fun rememberWebViewState(
+    url: String,
+    urlPolicy: URLPolicy? = null,
+) : WebViewState

@@ -1,13 +1,14 @@
 package dev.anthonyhfm.compose.web.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import dev.anthonyhfm.compose.web.data.URLPolicy
 import dev.datlag.kcef.KCEF
 import dev.datlag.kcef.KCEFBrowser
 import dev.datlag.kcef.KCEFClient
 import org.cef.browser.CefRendering
-import java.net.URL
 
 class DesktopWebViewState : WebViewState {
     val client: KCEFClient = KCEF.newClientBlocking()
@@ -25,8 +26,7 @@ class DesktopWebViewState : WebViewState {
         }
     }
 
-    override val title: String?
-        get() = null
+    override val title: MutableState<String?> = mutableStateOf(null)
 
     override var policy: URLPolicy? = null
 
@@ -53,23 +53,35 @@ class DesktopWebViewState : WebViewState {
 
 
 @Composable
-actual fun rememberWebViewState(html: String?): WebViewState {
+@JvmName("rememberWebViewHtmlState")
+actual fun rememberWebViewState(
+    html: String?,
+    urlPolicy: URLPolicy?,
+): WebViewState {
     val state = remember {
         DesktopWebViewState(
             html = html
         )
     }
 
+    state.policy = urlPolicy
+
     return state
 }
 
 @Composable
-actual fun rememberWebViewState(url: String): WebViewState {
+@JvmName("rememberWebViewUrlState")
+actual fun rememberWebViewState(
+    url: String,
+    urlPolicy: URLPolicy?,
+): WebViewState {
     val state = remember {
         DesktopWebViewState(
             url = url
         )
     }
+
+    state.policy = urlPolicy
 
     return state
 }
