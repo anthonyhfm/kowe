@@ -6,7 +6,6 @@ import androidx.compose.ui.Modifier
 
 import dev.anthonyhfm.compose.web.ui.rememberWebViewState
 import dev.anthonyhfm.compose.web.ui.WebView
-import kotlinx.coroutines.delay
 
 @Composable
 fun App() {

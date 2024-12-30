@@ -1,6 +1,8 @@
 package dev.anthonyhfm.compose.web.ui
 
 import android.view.ViewGroup
+import android.webkit.ConsoleMessage
+import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.Composable
@@ -20,9 +22,20 @@ actual fun WebView(
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
 
-                webViewClient = WebViewClient()
+                settings.javaScriptEnabled = true
+
+                webViewClient = CustomWebViewClient()
+                webChromeClient = CustomChromeClient()
             }
         },
         modifier = modifier
     )
+}
+
+class CustomChromeClient: WebChromeClient() {
+    // TODO: Implementations
+}
+
+class CustomWebViewClient: WebViewClient() {
+    // TODO: Implementations
 }

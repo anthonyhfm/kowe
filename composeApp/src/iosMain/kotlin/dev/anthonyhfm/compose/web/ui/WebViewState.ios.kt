@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import dev.anthonyhfm.compose.web.data.URLPolicy
+import dev.anthonyhfm.compose.web.data.WebConfig
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.readValue
 import platform.CoreGraphics.CGRectZero
@@ -13,10 +13,18 @@ import platform.Foundation.NSURL
 import platform.Foundation.NSURLRequest
 import platform.WebKit.WKWebView
 import platform.WebKit.WKWebViewConfiguration
+import platform.WebKit.javaScriptEnabled
 
 @OptIn(ExperimentalForeignApi::class)
 class AppleWebViewState : WebViewState {
     var wkWebView: WKWebView
+
+    override var config: WebConfig = WebConfig()
+        set(value) {
+            wkWebView.configuration.preferences.javaScriptEnabled = value.enableJavaScript
+
+            field = value
+        }
 
     override val title: MutableState<String?> = mutableStateOf(null)
 

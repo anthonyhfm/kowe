@@ -5,16 +5,19 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import dev.anthonyhfm.compose.web.data.URLPolicy
+import dev.anthonyhfm.compose.web.data.WebConfig
 import dev.datlag.kcef.KCEF
 import dev.datlag.kcef.KCEFBrowser
+import dev.datlag.kcef.KCEFBuilder
 import dev.datlag.kcef.KCEFClient
+import org.cef.CefBrowserSettings
 import org.cef.browser.CefRendering
 
-class DesktopWebViewState : WebViewState {
+class DesktopWebViewState(url: String? = null, html: String? = null) : WebViewState {
     val client: KCEFClient = KCEF.newClientBlocking()
     var browser: KCEFBrowser
 
-    constructor(url: String? = null, html: String? = null) {
+    init {
         if (url != null) {
             browser = client.createBrowser(url, CefRendering.DEFAULT, false)
         } else {
@@ -25,6 +28,13 @@ class DesktopWebViewState : WebViewState {
             )
         }
     }
+
+    override var config: WebConfig = WebConfig()
+        set(value) {
+            println("Config currently does not apply on desktop")
+
+            field = value
+        }
 
     override val title: MutableState<String?> = mutableStateOf(null)
 

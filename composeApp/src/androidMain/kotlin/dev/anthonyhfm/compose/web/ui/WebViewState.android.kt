@@ -9,11 +9,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import dev.anthonyhfm.compose.web.data.URLPolicy
+import dev.anthonyhfm.compose.web.data.WebConfig
 
 class AndroidWebViewState(
     context: Context
 ) : WebViewState {
     var webkit: WebView = WebView(context)
+
+    override var config: WebConfig = WebConfig()
+        set(value) {
+            webkit.settings.javaScriptEnabled = value.enableJavaScript
+
+            field = value
+        }
 
     override val title: MutableState<String?>
         get() {
@@ -46,6 +54,7 @@ class AndroidWebViewState(
 }
 
 @Composable
+@JvmName("rememberWebViewHtmlState")
 actual fun rememberWebViewState(
     html: String?,
     urlPolicy: URLPolicy?,
@@ -63,6 +72,7 @@ actual fun rememberWebViewState(
 }
 
 @Composable
+@JvmName("rememberWebViewUrlState")
 actual fun rememberWebViewState(
     url: String,
     urlPolicy: URLPolicy?,
