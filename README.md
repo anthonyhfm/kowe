@@ -14,24 +14,19 @@ The **Compose WebView Library** allows you to integrate WebViews into your **Com
 
 For using the Compose WebView Library in your Compose for Desktop Application you need to do some specific adjustments.
 
-As seen in the example down below, you will need to go to the root of your Desktop Application and initialize the Web Core. You will also need to only render WebView-States and WebView Composables when the initialization is done.
-This is due to [***KCEF***](https://github.com/DatL4g/KCEF) running the Chromium Engine on Desktop. It takes a little time to start and can not be accessed while initializing.
+As seen in the example down below, you will need to go to the root of your Desktop Application and initialize the Web Core.
+This is due to [***KCEF***](https://github.com/DatL4g/KCEF) running the Chromium Engine on Desktop. It takes a little time to start and can not be accessed without initializing first.
 
 ```kotlin
 fun main() = application {
+    // Initializing the Chromium Engine
+    WebViewCore.init() // <- Runs Blocking
+    
     Window(
         onCloseRequest = ::exitApplication,
         title = "Compose WebView",
     ) {
-        // Initializing the Chromium WebView
-        LaunchedEffect(Unit) {
-            WebViewCore.init()
-        }
-  
-        // Only display WebView implementations and state initializations when Chromium initialized
-        if (WebViewCore.initialized.value) {
-            App()
-        }
+        // ...
     }
 }
 ```

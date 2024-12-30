@@ -4,13 +4,13 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import dev.datlag.kcef.KCEF
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.runBlocking
 
 object WebViewCore {
     val initialized: MutableState<Boolean> = mutableStateOf(false)
 
-    suspend fun init() {
-        withContext(Dispatchers.IO) {
+    fun init() {
+        runBlocking(Dispatchers.IO) {
             KCEF.init(
                 builder = {
                     progress {
