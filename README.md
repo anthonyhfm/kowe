@@ -1,50 +1,30 @@
-# Compose WebView
+# Kowe - Compose Webviews for Kotlin Multiplatform
 
-The **Compose WebView Library** allows you to integrate WebViews into your **Compose Multiplatform** app, providing access to native WebView components on each platform, such as `android.webkit` for Android and `WKWebView` for iOS. This enables you to seamlessly display web content within your app, using the native WebView implementations of each platform with a unified API to ensure optimal performance and a great user and developer experience.
+**Kowe** is a [Kotlin Multiplatform](https://www.jetbrains.com/kotlin-multiplatform/) library which enables you to include native WebViews in your [Compose Mulitplatform](https://www.jetbrains.com/compose-multiplatform/) Application on Android, iOS and Desktop.
 
-## Usage
-
-### Installation
-
-***To be done ⚠️***
-
-### Using the WebView Component
-
-#### Desktop Setup
-
-For using the Compose WebView Library in your Compose for Desktop Application you need to do some specific adjustments.
-
-As seen in the example down below, you will need to go to the root of your Desktop Application and initialize the Web Core.
-This is due to [***KCEF***](https://github.com/DatL4g/KCEF) running the Chromium Engine on Desktop. It takes a little time to start and can not be accessed without initializing first.
-
-```kotlin
-fun main() = application {
-    // Initializing the Chromium Engine
-    WebViewCore.init() // <- Runs Blocking
-    
-    Window(
-        onCloseRequest = ::exitApplication,
-        title = "Compose WebView",
-    ) {
-        // ...
-    }
-}
-```
-
-> [!NOTE]
-> You will also need the newest version of the [JetBrains Runtime with JCEF](https://github.com/JetBrains/JetBrainsRuntime/releases) and follow the KCEF specific [gradle setup](https://github.com/DatL4g/KCEF/blob/master/COMPOSE.md#flags) instructions. 
+![WebView Composable running on all platforms (example)](webview.png)
 
 ---
 
-#### General Usage
+## Getting Started
 
-To use the WebView component you need to create a WebViewState and the Composable itself. Here is a small example:
+TBD
+
+## Usage
+
+Take a look at the [example repository](https://github.com/anthonyhfm/kowe-example)
+
+### Common (Android, iOS, Desktop)
+
+Building WebViews with the **Kowe** library is very easy. All you need is a ***WebViewState*** and the ***WebView***-Composable. You can also do further configuration for your webview using the ***WebViewState***. 
+
+Example Code:
 
 ```kotlin
 @Composable
 fun App() {
-    val state = rememberWebViewState(url = "https://example.com")
-  
+    val state = rememberWebViewState(url = "https://www.jetbrains.com/compose-multiplatform/")
+
     WebView(
         state = state,
         modifier = Modifier
@@ -53,35 +33,51 @@ fun App() {
 }
 ```
 
-## Support
+### Desktop specific
 
-Compose WebView currently only supports Android and iOS but I am also working on a Desktop and Web implementation.
+For using **Kowe** in **Compose for Desktop** you will need to do some extra configuration:
 
-Implementations:
-| Android | iOS | Desktop |
-| ------- | --- | ------- |
-| android.webkit | WKWebView | [***Jetbrains Runtime, KCEF***](https://github.com/JetBrains/JetBrainsRuntime?tab=readme-ov-file#why-use-jetbrains-runtime) |
+1. Use the [Jetbrains Runtime with JCEF](https://github.com/JetBrains/JetBrainsRuntime/releases) to compile your application
+2. Configure [needed JVM Flags](https://github.com/DatL4g/KCEF/blob/master/COMPOSE.md#flags) for setting up [KCEF](https://github.com/DatL4g/KCEF/tree/master)
+3. Initialize the `WebViewCore` before starting your Application:
 
-> [!NOTE]
-> In order to use the **Compose WebView Library** in a Compose for Desktop Application you need to run your application with a JCEF build of the [**JetBrains Runtime**](https://github.com/JetBrains/JetBrainsRuntime). You also need to do some additional adjustment to your gradle setup for [***KCEF***](https://github.com/DatL4g/KCEF/blob/master/COMPOSE.md#flags) 
+```kotlin
+fun main() = application {
+    WebViewCore.init() // <-- Initializing the Chromium Engine (runs blocking)
 
----
+    Window(
+        onCloseRequest = ::exitApplication,
+        title = "kowe-example",
+    ) {
+        App() // <-- Your App
 
-## Project Overview
+        DisposableEffect(Unit) { // Needed for closing the Chromium Engine
+            onDispose {
+                WebViewCore.close() // <-- Properly closing the Chromium Engine
+            }
+        }
+    }
+}
+```
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+## Feature List
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+This is a list of all the features the **Kowe** library currently supports. This library is currently under heavy development and the feature list will most likely grow by a lot over time.
 
----
+- Basic Web Views
+  - Android (`android.webkitx`)
+  - iOS (`WkWebView`)
+  - Desktop (`KCEF/JCEF, Jetbrains Runtime JCEF edition`)
+- Web Navigation
+  - Load URLs
+  - Load HTML
+  - Reloading
+- JavaScript Evaluation
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
+## Issues
 
-If you face any issues, please report them on [GitHub](https://github.com/JetBrains/compose-multiplatform/issues).
+Feel free to test the **Kowe** library and submit issues and feature requests [here](https://github.com/anthonyhfm/kowe/issues)
+
+## Credits
+
+- [KCEF](https://github.com/DatL4g/KCEF/tree/master)
