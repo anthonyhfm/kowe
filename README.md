@@ -8,7 +8,13 @@
 
 ## Getting Started
 
-TBD
+To start using **Kowe** you need to include its dependency in your `build.gradle.kts`:
+
+```kotlin
+commonMain.dependencies {
+    implementation("dev.anthonyhfm:kowe:<current-version>")
+}
+```
 
 ## Usage
 
