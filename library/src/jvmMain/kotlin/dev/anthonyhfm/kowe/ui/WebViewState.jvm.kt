@@ -1,6 +1,7 @@
 package dev.anthonyhfm.kowe.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import dev.anthonyhfm.kowe.data.WebConfig
 import dev.anthonyhfm.kowe.data.WebPolicy
 import dev.datlag.kcef.KCEF
@@ -62,7 +63,15 @@ actual fun rememberWebViewState(
     html: String?,
     policy: WebPolicy?
 ): WebViewState {
-    TODO("Not yet implemented")
+    val state = remember {
+        ChromiumWebViewState(
+            html = html
+        )
+    }
+
+    state.policy = policy
+
+    return state
 }
 
 @JvmName("rememberWebViewUrlState")
@@ -71,5 +80,13 @@ actual fun rememberWebViewState(
     url: String,
     policy: WebPolicy?,
 ) : WebViewState {
-    TODO("Not yet implemented")
+    val state = remember {
+        ChromiumWebViewState(
+            url = url
+        )
+    }
+
+    state.policy = policy
+
+    return state
 }
