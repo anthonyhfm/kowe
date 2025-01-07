@@ -60,17 +60,24 @@ mavenPublishing {
         inceptionYear = "2024"
         url = "https://github.com/anthonyhfm/kowe/"
 
+        licenses {
+            license {
+                name = "The Apache License, Version 2.0"
+                url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+            }
+        }
         developers {
             developer {
-                id = "XXX"
+                id = "anthonyhfm"
                 name = "Anthony Hofmeister"
                 url = "https://github.com/anthonyhfm"
             }
         }
         scm {
-            url = "XXX"
-            connection = "YYY"
-            developerConnection = "ZZZ"
+            url = "https://github.com/anthonyhfm/kowe"
+            connection = "scm:git:git://github.com/anthonyhfm/kowe.git"
+            developerConnection = "scm:git:ssh://git@github.com/anthonyhfm/kowe.git"
         }
     }
 }
