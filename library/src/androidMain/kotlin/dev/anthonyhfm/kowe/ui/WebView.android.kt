@@ -6,6 +6,8 @@ import android.webkit.WebViewClient
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import dev.anthonyhfm.kowe.clients.KoweWebChromeClient
+import dev.anthonyhfm.kowe.clients.KoweWebViewClient
 
 @Composable
 actual fun WebView(
@@ -22,18 +24,10 @@ actual fun WebView(
 
                 settings.javaScriptEnabled = true
 
-                webViewClient = CustomWebViewClient()
-                webChromeClient = CustomChromeClient()
+                webViewClient = KoweWebViewClient(state)
+                webChromeClient = KoweWebChromeClient(state)
             }
         },
         modifier = modifier
     )
-}
-
-class CustomChromeClient: WebChromeClient() {
-    // TODO: Implementations
-}
-
-class CustomWebViewClient: WebViewClient() {
-    // TODO: Implementations
 }

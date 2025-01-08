@@ -2,11 +2,17 @@ package dev.anthonyhfm.kowe.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import dev.anthonyhfm.kowe.chromium.KoweLifeSpanHandler
+import dev.anthonyhfm.kowe.chromium.KoweRequestHandler
+import dev.anthonyhfm.kowe.data.JavaScriptResult
 import dev.anthonyhfm.kowe.data.WebConfig
 import dev.anthonyhfm.kowe.data.WebPolicy
 import dev.datlag.kcef.KCEF
 import dev.datlag.kcef.KCEFBrowser
 import dev.datlag.kcef.KCEFClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import org.cef.CefSettings
 import org.cef.browser.CefRendering
 
 class ChromiumWebViewState(
@@ -14,10 +20,25 @@ class ChromiumWebViewState(
     html: String? = null
 ) : WebViewState {
     override var location: String? = null
-    override var policy: WebPolicy? = null
-    override var title: String? = null
+    override val title: String? = null
 
-    val client: KCEFClient = KCEF.newClientBlocking()
+    private val client: KCEFClient = KCEF.newClientBlocking()
+
+    private val lifeSpanHandler = KoweLifeSpanHandler()
+    private val requestHandler = KoweRequestHandler()
+
+    init {
+        client.addLifeSpanHandler(lifeSpanHandler)
+        client.addRequestHandler(requestHandler)
+    }
+
+    override var policy: WebPolicy? = null
+        set(value) {
+            lifeSpanHandler.policy = value
+            requestHandler.policy = value
+
+            field = value
+        }
 
     var browser: KCEFBrowser = if (url != null) {
         client.createBrowser(url, CefRendering.DEFAULT, false)
@@ -31,13 +52,19 @@ class ChromiumWebViewState(
 
     override var config: WebConfig = WebConfig()
         set(value) {
-            println("Config currently does not apply on desktop")
+            // TODO: Apply config on Desktop
 
             field = value
         }
 
-    override fun evaluateJavaScript(js: String) {
-        browser.executeJavaScript(js, null, 0)
+    override fun evaluateJavaScript(js: String): JavaScriptResult {
+        var result: String?
+
+        runBlocking(Dispatchers.IO) {
+            result = browser.evaluateJavaScript(js)
+        }
+
+        return JavaScriptResult(result)
     }
 
     override fun loadUrl(url: String) {
@@ -61,6 +88,7 @@ class ChromiumWebViewState(
 @Composable
 actual fun rememberWebViewState(
     html: String?,
+    config: WebConfig,
     policy: WebPolicy?
 ): WebViewState {
     val state = remember {
@@ -69,6 +97,7 @@ actual fun rememberWebViewState(
         )
     }
 
+    state.config = config
     state.policy = policy
 
     return state
@@ -78,6 +107,7 @@ actual fun rememberWebViewState(
 @Composable
 actual fun rememberWebViewState(
     url: String,
+    config: WebConfig,
     policy: WebPolicy?,
 ) : WebViewState {
     val state = remember {
@@ -86,6 +116,7 @@ actual fun rememberWebViewState(
         )
     }
 
+    state.config = config
     state.policy = policy
 
     return state

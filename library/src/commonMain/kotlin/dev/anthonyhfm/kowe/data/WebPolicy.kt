@@ -9,7 +9,7 @@ interface WebPolicy {
     /**
      * ## decidePolicyFor
      *
-     * this function can be overwritten to create custom url rules
+     * You can use this function to create custom **URL-Rules** for your webview e.g. by only returning "true" when the url includes "jetbrains.com", therefore only urls with "jetbrains.com" can be opened in your webview.
      */
     fun decidePolicyFor(url: String): Boolean
 }

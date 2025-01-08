@@ -6,6 +6,7 @@ import android.webkit.WebView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import dev.anthonyhfm.kowe.data.JavaScriptResult
 import dev.anthonyhfm.kowe.data.WebConfig
 import dev.anthonyhfm.kowe.data.WebPolicy
 
@@ -14,34 +15,41 @@ class AndroidWebViewState(
 ) : WebViewState {
     var webkit: WebView = WebView(context)
 
-    override var location: String? = null
-    override var policy: WebPolicy? = null
-    override var title: String? = null
+    override var location: String?
         get() {
-            return webkit.title
+            return webkit.url
         }
+        set(value) {
+            webkit.loadUrl(value ?: "about:blank")
+        }
+
+    override var policy: WebPolicy? = null
+    override val title: String?
+        get() { return webkit.title }
 
     override var config: WebConfig = WebConfig()
         set(value) {
             webkit.settings.javaScriptEnabled = value.enableJavaScript
+            webkit.settings.userAgentString = value.userAgent
 
             field = value
         }
 
-    override fun evaluateJavaScript(js: String) {
+    override fun evaluateJavaScript(js: String): JavaScriptResult {
+        var result: String? = null
         webkit.evaluateJavascript(js) {
-            Log.v("jsCallback", js)
+            result = it
         }
+
+        return JavaScriptResult(result)
     }
 
     override fun loadUrl(url: String) {
         location = url
-
-        webkit.loadUrl(url)
     }
 
     override fun loadHtml(html: String) {
-        location = "about:blank"
+        location = null
 
         webkit.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null)
     }
@@ -55,6 +63,7 @@ class AndroidWebViewState(
 @Composable
 actual fun rememberWebViewState(
     html: String?,
+    config: WebConfig,
     policy: WebPolicy?
 ): WebViewState {
     val context = LocalContext.current
@@ -62,6 +71,7 @@ actual fun rememberWebViewState(
         AndroidWebViewState(context)
     }
 
+    state.config = config
     state.policy = policy
 
     if (html != null) {
@@ -75,6 +85,7 @@ actual fun rememberWebViewState(
 @Composable
 actual fun rememberWebViewState(
     url: String,
+    config: WebConfig,
     policy: WebPolicy?,
 ) : WebViewState {
     val context = LocalContext.current
@@ -82,7 +93,9 @@ actual fun rememberWebViewState(
         AndroidWebViewState(context)
     }
 
+    state.config = config
     state.policy = policy
+
     state.loadUrl(url)
 
     return state
