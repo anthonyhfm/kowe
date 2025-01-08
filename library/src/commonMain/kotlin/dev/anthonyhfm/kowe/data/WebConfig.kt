@@ -14,13 +14,6 @@ data class WebConfig(
     val enableJavaScript: Boolean = true,
 
     /**
-     * # Inline Videos
-     *
-     * Automatically starts playing videos inline
-     */
-    val inlineVideos: Boolean = false,
-
-    /**
      * # User-Agent
      *
      * Configure the User-Agent of your webview which websites can use to identify your application.
