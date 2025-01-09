@@ -1,14 +1,17 @@
 package dev.anthonyhfm.kowe.ui
 
 import android.content.Context
-import android.util.Log
 import android.webkit.WebView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import dev.anthonyhfm.kowe.data.JavaScriptResult
 import dev.anthonyhfm.kowe.data.WebConfig
+import dev.anthonyhfm.kowe.data.WebLoadingState
 import dev.anthonyhfm.kowe.data.WebPolicy
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class AndroidWebViewState(
     context: Context
@@ -23,9 +26,13 @@ class AndroidWebViewState(
             webkit.loadUrl(value ?: "about:blank")
         }
 
-    override var policy: WebPolicy? = null
     override val title: String?
         get() { return webkit.title }
+
+    internal val _loadingState: MutableStateFlow<WebLoadingState> = MutableStateFlow(WebLoadingState.Unknown)
+    override val loadingState: StateFlow<WebLoadingState> = _loadingState.asStateFlow()
+
+    override var policy: WebPolicy? = null
 
     override var config: WebConfig = WebConfig()
         set(value) {

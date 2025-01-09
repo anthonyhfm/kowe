@@ -78,6 +78,11 @@ This is a list of all the features the **Kowe** library currently supports. This
   - Load URLs
   - Load HTML
   - Reloading
+  - Loading States
+- Configuration (only for Android and iOS right now)
+  - Enable / Disable JavaScript
+  - Custom User-Agents
+- URL Policies
 - JavaScript Evaluation
 
 ## Issues

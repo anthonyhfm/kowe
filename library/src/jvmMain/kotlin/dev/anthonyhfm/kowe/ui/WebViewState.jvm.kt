@@ -3,33 +3,49 @@ package dev.anthonyhfm.kowe.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import dev.anthonyhfm.kowe.chromium.KoweLifeSpanHandler
+import dev.anthonyhfm.kowe.chromium.KoweLoadHandler
 import dev.anthonyhfm.kowe.chromium.KoweRequestHandler
 import dev.anthonyhfm.kowe.data.JavaScriptResult
 import dev.anthonyhfm.kowe.data.WebConfig
+import dev.anthonyhfm.kowe.data.WebLoadingState
 import dev.anthonyhfm.kowe.data.WebPolicy
 import dev.datlag.kcef.KCEF
 import dev.datlag.kcef.KCEFBrowser
 import dev.datlag.kcef.KCEFClient
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.runBlocking
-import org.cef.CefSettings
 import org.cef.browser.CefRendering
 
 class ChromiumWebViewState(
     url: String? = null,
     html: String? = null
 ) : WebViewState {
-    override var location: String? = null
     override val title: String? = null
+    override var location: String?
+        get() {
+            return browser.url
+        }
+        set(value) {
+            browser.loadURL(value)
+        }
 
     private val client: KCEFClient = KCEF.newClientBlocking()
 
     private val lifeSpanHandler = KoweLifeSpanHandler()
     private val requestHandler = KoweRequestHandler()
 
+    private val _loadingState: MutableStateFlow<WebLoadingState> = MutableStateFlow(WebLoadingState.Unknown)
+    override val loadingState: StateFlow<WebLoadingState> = _loadingState.asStateFlow()
+
+    private val loadHandler = KoweLoadHandler(_loadingState)
+
     init {
         client.addLifeSpanHandler(lifeSpanHandler)
         client.addRequestHandler(requestHandler)
+        client.addLoadHandler(loadHandler)
     }
 
     override var policy: WebPolicy? = null
@@ -41,7 +57,11 @@ class ChromiumWebViewState(
         }
 
     var browser: KCEFBrowser = if (url != null) {
-        client.createBrowser(url, CefRendering.DEFAULT, false)
+        client.createBrowser(
+            url = url,
+            rendering = CefRendering.DEFAULT,
+            isTransparent = false
+        )
     } else {
         client.createBrowser(
             url = if (html == null) html else "data:text/html,$html",

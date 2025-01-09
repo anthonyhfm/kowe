@@ -4,10 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import dev.anthonyhfm.kowe.data.JavaScriptResult
 import dev.anthonyhfm.kowe.data.WebConfig
+import dev.anthonyhfm.kowe.data.WebLoadingState
 import dev.anthonyhfm.kowe.data.WebPolicy
 import dev.anthonyhfm.kowe.ui.webkit.AppleWebViewCoordinator
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.readValue
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import platform.CoreGraphics.CGRectZero
 import platform.Foundation.NSURL
 import platform.Foundation.NSURLRequest
@@ -18,7 +22,24 @@ import platform.WebKit.javaScriptEnabled
 @OptIn(ExperimentalForeignApi::class)
 class AppleWebViewState : WebViewState {
     var wkWebView: WKWebView
-    val coordinator = AppleWebViewCoordinator()
+
+    override val title: String?
+        get() { return wkWebView.title }
+
+    override var location: String?
+        get() {
+            return wkWebView.URL?.absoluteString
+        }
+        set(value) {
+            if (value != null) {
+                wkWebView.loadRequest(NSURLRequest(NSURL(value)))
+            }
+        }
+
+    private val _loadingState: MutableStateFlow<WebLoadingState> = MutableStateFlow(WebLoadingState.Unknown)
+    override val loadingState: StateFlow<WebLoadingState> = _loadingState.asStateFlow()
+
+    private val coordinator = AppleWebViewCoordinator(_loadingState)
 
     override var config: WebConfig = WebConfig()
         set(value) {
@@ -27,10 +48,6 @@ class AppleWebViewState : WebViewState {
 
             field = value
         }
-
-    override var location: String? = null
-    override val title: String?
-        get() { return wkWebView.title }
 
     override var policy: WebPolicy? = null
         set(value) {

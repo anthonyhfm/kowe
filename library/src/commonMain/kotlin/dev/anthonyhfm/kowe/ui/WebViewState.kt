@@ -6,13 +6,10 @@ import dev.anthonyhfm.kowe.data.JavaScriptResult
 import dev.anthonyhfm.kowe.data.WebConfig
 import dev.anthonyhfm.kowe.data.WebLoadingState
 import dev.anthonyhfm.kowe.data.WebPolicy
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 interface WebViewState {
-    /**
-     * This Flow contains the current url state of your webview
-     */
+    val title: String?
     var location: String?
 
     var config: WebConfig
@@ -20,16 +17,15 @@ interface WebViewState {
         set(value) { }
 
     var policy: WebPolicy?
-    val title: String?
 
-    val loading: StateFlow<WebLoadingState>
-        get() = MutableStateFlow(WebLoadingState.Unknown)
+    val loadingState: StateFlow<WebLoadingState>
 
     /**
-     * Injects a javascript script in your webview.
+     * # JavaScript Evaluation
+     *
+     * The [evaluateJavaScript] allows you to run your own JavaScript code in your webview.
      */
     fun evaluateJavaScript(js: String) : JavaScriptResult
-
     fun loadUrl(url: String)
     fun loadHtml(html: String)
     fun reload()
