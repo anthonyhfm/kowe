@@ -22,7 +22,7 @@ class KoweLifeSpanHandler : CefLifeSpanHandlerAdapter() {
         target_frame_name: String?
     ): Boolean {
         if (policy != null && target_url != null) {
-            if (policy!!.decidePolicyFor(target_url)) {
+            if (policy!!.allowUrl(target_url)) {
                 browser?.loadURL(target_url)
             }
         } else {

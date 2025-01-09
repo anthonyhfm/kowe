@@ -19,7 +19,7 @@ class KoweRequestHandler : CefRequestHandlerAdapter() {
         var cancel = false
 
         if (policy != null && request?.url != null) {
-            cancel = policy!!.decidePolicyFor(request.url)
+            cancel = !policy!!.allowUrl(request.url)
         }
 
         return cancel

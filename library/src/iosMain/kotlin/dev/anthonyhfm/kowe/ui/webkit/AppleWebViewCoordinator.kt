@@ -32,7 +32,7 @@ class AppleWebViewCoordinator(
         decisionHandler: (WKNavigationActionPolicy) -> Unit
     ) {
         if (policy != null) {
-            val decision = policy!!.decidePolicyFor(decidePolicyForNavigationAction.request.URL?.absoluteString ?: "")
+            val decision = policy!!.allowUrl(decidePolicyForNavigationAction.request.URL?.absoluteString ?: "")
 
             if (decision) {
                 decisionHandler(WKNavigationActionPolicy.WKNavigationActionPolicyAllow)

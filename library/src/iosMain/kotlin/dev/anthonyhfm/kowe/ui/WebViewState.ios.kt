@@ -32,7 +32,7 @@ class AppleWebViewState : WebViewState {
         }
         set(value) {
             if (value != null) {
-                wkWebView.loadRequest(NSURLRequest(NSURL(value)))
+                wkWebView.loadRequest(NSURLRequest(NSURL(string = value)))
             }
         }
 

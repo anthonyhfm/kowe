@@ -15,7 +15,7 @@ class KoweWebViewClient(
 ) : WebViewClient() {
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
         if (state.policy != null) {
-            val decision = state.policy!!.decidePolicyFor(request?.url.toString())
+            val decision = state.policy!!.allowUrl(request?.url.toString())
 
             return !decision // If the decision is "true" it will return false because it should not override.
         } else {
