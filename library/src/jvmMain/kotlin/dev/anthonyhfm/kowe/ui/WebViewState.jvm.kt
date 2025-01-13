@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import dev.anthonyhfm.kowe.chromium.KoweLifeSpanHandler
 import dev.anthonyhfm.kowe.chromium.KoweLoadHandler
 import dev.anthonyhfm.kowe.chromium.KoweRequestHandler
+import dev.anthonyhfm.kowe.data.ConsoleMessage
 import dev.anthonyhfm.kowe.data.JavaScriptResult
 import dev.anthonyhfm.kowe.data.WebConfig
 import dev.anthonyhfm.kowe.data.WebLoadingState
@@ -76,6 +77,10 @@ class ChromiumWebViewState(
 
             field = value
         }
+
+    override var onPageStart: (String?) -> Unit = { }
+    override var onPageFinish: (String?) -> Unit = { }
+    override var onConsoleMessage: (ConsoleMessage) -> Unit = { }
 
     override fun evaluateJavaScript(js: String): JavaScriptResult {
         var result: String?

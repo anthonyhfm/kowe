@@ -2,6 +2,7 @@ package dev.anthonyhfm.kowe.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import dev.anthonyhfm.kowe.data.ConsoleMessage
 import dev.anthonyhfm.kowe.data.JavaScriptResult
 import dev.anthonyhfm.kowe.data.WebConfig
 import dev.anthonyhfm.kowe.data.WebLoadingState
@@ -67,6 +68,10 @@ class AppleWebViewState : WebViewState {
         wkWebView.navigationDelegate = coordinator
         wkWebView.UIDelegate = coordinator
     }
+
+    override var onPageStart: (String?) -> Unit = { }
+    override var onPageFinish: (String?) -> Unit = { }
+    override var onConsoleMessage: (ConsoleMessage) -> Unit = { }
 
     override fun evaluateJavaScript(js: String): JavaScriptResult {
         var callbackResult: String? = null

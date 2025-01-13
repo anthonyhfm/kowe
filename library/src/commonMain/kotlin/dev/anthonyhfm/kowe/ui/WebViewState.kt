@@ -2,6 +2,7 @@ package dev.anthonyhfm.kowe.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import dev.anthonyhfm.kowe.data.ConsoleMessage
 import dev.anthonyhfm.kowe.data.JavaScriptResult
 import dev.anthonyhfm.kowe.data.WebConfig
 import dev.anthonyhfm.kowe.data.WebLoadingState
@@ -19,6 +20,17 @@ interface WebViewState {
     var policy: WebPolicy?
 
     val loadingState: StateFlow<WebLoadingState>
+    
+    var onPageStart: (String?) -> Unit
+    var onPageFinish: (String?) -> Unit
+
+    /**
+     * # Console Messages
+     *
+     * You can set a function as value for [onConsoleMessage] to use the console messages sent by a website in your kowe webview.
+     */
+    var onConsoleMessage: (ConsoleMessage) -> Unit
+
 
     /**
      * # JavaScript Evaluation
