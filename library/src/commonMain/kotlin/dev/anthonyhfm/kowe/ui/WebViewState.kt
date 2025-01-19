@@ -23,6 +23,7 @@ interface WebViewState {
     
     var onPageStart: (String?) -> Unit
     var onPageFinish: (String?) -> Unit
+    var onMessageReceived: (String) -> Unit
 
     /**
      * # Console Messages

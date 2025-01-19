@@ -84,6 +84,7 @@ This is a list of all the features the **Kowe** library currently supports. This
   - Custom User-Agents
 - URL Policies
 - JavaScript Evaluation
+- Console Message forwarding (currently Android only)
 
 ## Issues
 

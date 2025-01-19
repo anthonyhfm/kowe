@@ -38,6 +38,7 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.ui)
+                implementation(compose.components.resources)
             }
         }
         val jvmMain by getting {
@@ -67,7 +68,7 @@ android {
 mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
 
-    signAllPublications()
+    // signAllPublications()
 
     coordinates(group.toString(), "kowe", version.toString())
 

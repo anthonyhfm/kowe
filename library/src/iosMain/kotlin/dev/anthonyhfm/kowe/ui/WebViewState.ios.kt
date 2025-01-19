@@ -8,14 +8,20 @@ import dev.anthonyhfm.kowe.data.WebConfig
 import dev.anthonyhfm.kowe.data.WebLoadingState
 import dev.anthonyhfm.kowe.data.WebPolicy
 import dev.anthonyhfm.kowe.ui.webkit.AppleWebViewCoordinator
+import dev.anthonyhfm.kowe.ui.webkit.BridgeMessageHandler
+import dev.anthonyhfm.library.generated.resources.Res
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.readValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import platform.CoreGraphics.CGRectZero
 import platform.Foundation.NSURL
 import platform.Foundation.NSURLRequest
+import platform.WebKit.WKUserScript
+import platform.WebKit.WKUserScriptInjectionTime
 import platform.WebKit.WKWebView
 import platform.WebKit.WKWebViewConfiguration
 import platform.WebKit.javaScriptEnabled
@@ -45,7 +51,13 @@ class AppleWebViewState : WebViewState {
     override var config: WebConfig = WebConfig()
         set(value) {
             wkWebView.configuration.preferences.javaScriptEnabled = value.enableJavaScript
-            wkWebView.customUserAgent = config.userAgent
+            wkWebView.customUserAgent = value.userAgent
+
+            if (value.enableJsBridge) {
+                addBridge()
+            } else {
+                removeBridge()
+            }
 
             field = value
         }
@@ -71,6 +83,7 @@ class AppleWebViewState : WebViewState {
 
     override var onPageStart: (String?) -> Unit = { }
     override var onPageFinish: (String?) -> Unit = { }
+    override var onMessageReceived: (String) -> Unit = { }
     override var onConsoleMessage: (ConsoleMessage) -> Unit = { }
 
     override fun evaluateJavaScript(js: String): JavaScriptResult {
@@ -100,6 +113,36 @@ class AppleWebViewState : WebViewState {
 
     override fun reload() {
         wkWebView.reload()
+    }
+
+    @OptIn(ExperimentalResourceApi::class)
+    private fun addBridge() {
+        println("Injecting Kowe Bridge")
+
+        val script = WKUserScript(
+            source = runBlocking {
+                Res.readBytes("files/bridge_injection.js").decodeToString()
+            },
+            injectionTime = WKUserScriptInjectionTime.WKUserScriptInjectionTimeAtDocumentStart,
+            forMainFrameOnly = false
+        )
+
+        wkWebView.configuration.userContentController.addUserScript(script)
+
+        wkWebView.configuration.userContentController.addScriptMessageHandler(
+            scriptMessageHandler = BridgeMessageHandler(
+                onMessageReceived = {
+                    onMessageReceived(it)
+                }
+            ),
+            name = "kowe"
+        )
+    }
+
+    private fun removeBridge() {
+        wkWebView.configuration.userContentController.removeScriptMessageHandlerForName("kowe")
+
+        wkWebView.configuration.userContentController.removeAllUserScripts()
     }
 }
 

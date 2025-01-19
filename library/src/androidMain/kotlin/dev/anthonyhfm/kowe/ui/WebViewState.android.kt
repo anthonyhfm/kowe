@@ -5,14 +5,18 @@ import android.webkit.WebView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import dev.anthonyhfm.kowe.bridge.KoweMessageInterface
 import dev.anthonyhfm.kowe.data.ConsoleMessage
 import dev.anthonyhfm.kowe.data.JavaScriptResult
 import dev.anthonyhfm.kowe.data.WebConfig
 import dev.anthonyhfm.kowe.data.WebLoadingState
 import dev.anthonyhfm.kowe.data.WebPolicy
+import dev.anthonyhfm.library.generated.resources.Res
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class AndroidWebViewState(
     context: Context
@@ -40,11 +44,18 @@ class AndroidWebViewState(
             webkit.settings.javaScriptEnabled = value.enableJavaScript
             webkit.settings.userAgentString = value.userAgent
 
+            if (value.enableJsBridge) {
+                addBridge()
+            } else {
+                removeBridge()
+            }
+
             field = value
         }
 
     override var onPageStart: (String?) -> Unit = { }
     override var onPageFinish: (String?) -> Unit = { }
+    override var onMessageReceived: (String) -> Unit = { }
     override var onConsoleMessage: (ConsoleMessage) -> Unit = { }
 
     override fun evaluateJavaScript(js: String): JavaScriptResult {
@@ -69,6 +80,28 @@ class AndroidWebViewState(
     override fun reload() {
         webkit.reload()
     }
+
+    private fun addBridge() {
+        webkit.addJavascriptInterface(
+            KoweMessageInterface(
+                onMessage = {
+                    onMessageReceived(it)
+                }
+            ),
+            "koweNative"
+        )
+
+        webkit.evaluateJavascript(INJECTION_SCRIPT) { }
+    }
+
+    private fun removeBridge() {
+        webkit.removeJavascriptInterface("koweNative")
+
+        webkit.evaluateJavascript("window.kowe = {};") { }
+    }
+
+    @OptIn(ExperimentalResourceApi::class)
+    internal val INJECTION_SCRIPT = runBlocking { Res.readBytes("files/bridge_injection.js").decodeToString() }
 }
 
 @JvmName("rememberWebViewHtmlState")

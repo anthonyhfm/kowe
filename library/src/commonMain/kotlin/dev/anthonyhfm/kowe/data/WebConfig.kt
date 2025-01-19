@@ -20,5 +20,12 @@ data class WebConfig(
      *
      * Learn more about User-Agents [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent)
      */
-    val userAgent: String? = null
+    val userAgent: String? = null,
+
+    /**
+     * # JavaScript Bridge
+     *
+     * Kowe's JavaScript-bridge allows your website to use a window.kowe.postMessage call to send messages to your webview.
+     */
+    var enableJsBridge: Boolean = false
 )

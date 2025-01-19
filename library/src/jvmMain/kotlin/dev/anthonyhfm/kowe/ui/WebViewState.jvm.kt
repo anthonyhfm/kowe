@@ -80,6 +80,7 @@ class ChromiumWebViewState(
 
     override var onPageStart: (String?) -> Unit = { }
     override var onPageFinish: (String?) -> Unit = { }
+    override var onMessageReceived: (String) -> Unit = { }
     override var onConsoleMessage: (ConsoleMessage) -> Unit = { }
 
     override fun evaluateJavaScript(js: String): JavaScriptResult {
