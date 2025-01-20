@@ -11,9 +11,11 @@
             } else if (window.koweNative) {
                 // Android
                 window.koweNative.postMessage(message);
-            } else if (window.cefNative) {
+            } else if (window.cefQuery) {
                 // Desktop
-                window.cefNative.postMessage(message);
+                window.cefQuery({
+                    request: message,
+                });
             } else {
                 console.warn("Kowe postMessage API is not supported on this platform.");
             }

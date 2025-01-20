@@ -1,6 +1,7 @@
 package dev.anthonyhfm.kowe.chromium
 
 import dev.anthonyhfm.kowe.data.WebLoadingState
+import dev.anthonyhfm.kowe.ui.ChromiumWebViewState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,13 +13,18 @@ import org.cef.handler.CefLoadHandlerAdapter
 import org.cef.network.CefRequest
 
 class KoweLoadHandler(
-    private val loadingState: MutableStateFlow<WebLoadingState>
+    private val loadingState: MutableStateFlow<WebLoadingState>,
+    private val state: ChromiumWebViewState
 ) : CefLoadHandlerAdapter() {
     override fun onLoadStart(
         browser: CefBrowser?,
         frame: CefFrame?,
         transitionType: CefRequest.TransitionType?
     ) {
+        if (state.config.enableJsBridge) {
+            browser?.executeJavaScript(state.INJECTION_SCRIPT, null, 0)
+        }
+
         CoroutineScope(Dispatchers.IO).launch {
             loadingState.emit(WebLoadingState.Loading)
         }
