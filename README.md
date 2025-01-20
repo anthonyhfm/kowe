@@ -82,7 +82,6 @@ This is a list of all the features the **Kowe** library currently supports. This
 - Configuration (only for Android and iOS right now)
   - Enable / Disable JavaScript
   - Custom User-Agents
-  - JavaScript Bridge (Kowe API)
 - URL Policies
 - JavaScript Evaluation
 - Unified Kowe JavaScript API
