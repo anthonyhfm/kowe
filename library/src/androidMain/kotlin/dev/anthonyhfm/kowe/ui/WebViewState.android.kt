@@ -55,6 +55,7 @@ class AndroidWebViewState(
 
     override var onPageStart: (String?) -> Unit = { }
     override var onPageFinish: (String?) -> Unit = { }
+    override var onPageError: (WebLoadingState.Error) -> Unit = { }
     override var onMessageReceived: (String) -> Unit = { }
     override var onConsoleMessage: (ConsoleMessage) -> Unit = { }
 

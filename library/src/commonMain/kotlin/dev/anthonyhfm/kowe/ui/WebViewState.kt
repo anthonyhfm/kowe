@@ -23,6 +23,7 @@ interface WebViewState {
     
     var onPageStart: (String?) -> Unit
     var onPageFinish: (String?) -> Unit
+    var onPageError: (WebLoadingState.Error) -> Unit
     var onMessageReceived: (String) -> Unit
 
     /**

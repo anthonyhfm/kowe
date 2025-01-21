@@ -2,6 +2,7 @@ package dev.anthonyhfm.kowe.ui.webkit
 
 import dev.anthonyhfm.kowe.data.WebLoadingState
 import dev.anthonyhfm.kowe.data.WebPolicy
+import dev.anthonyhfm.kowe.ui.AppleWebViewState
 import kotlinx.cinterop.ObjCSignatureOverride
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,9 +21,11 @@ import platform.WebKit.WKWebView
 import platform.WebKit.WKWebViewConfiguration
 import platform.WebKit.WKWindowFeatures
 import platform.darwin.NSObject
+import platform.posix.err
 
 class AppleWebViewCoordinator(
-    val loadingState: MutableStateFlow<WebLoadingState>
+    val loadingState: MutableStateFlow<WebLoadingState>,
+    val state: AppleWebViewState,
 ) : NSObject(), WKNavigationDelegateProtocol, WKUIDelegateProtocol {
     var policy: WebPolicy? = null
 
@@ -67,6 +70,8 @@ class AppleWebViewCoordinator(
         CoroutineScope(Dispatchers.IO).launch {
             loadingState.emit(WebLoadingState.Loading)
         }
+
+        state.onPageStart(webView.URL?.absoluteString)
     }
 
     @ObjCSignatureOverride
@@ -77,6 +82,8 @@ class AppleWebViewCoordinator(
         CoroutineScope(Dispatchers.IO).launch {
             loadingState.emit(WebLoadingState.Finished)
         }
+
+        state.onPageFinish(webView.URL?.absoluteString)
     }
 
     override fun webView(
@@ -84,8 +91,16 @@ class AppleWebViewCoordinator(
         didFailNavigation: WKNavigation?,
         withError: NSError
     ) {
+        val error = WebLoadingState.Error(
+            url = webView.URL?.absoluteString,
+            description = withError.localizedDescription,
+            errorCode = null
+        )
+
         CoroutineScope(Dispatchers.IO).launch {
-            loadingState.emit(WebLoadingState.Error(withError.localizedDescription))
+            loadingState.emit(error)
         }
+
+        state.onPageError(error)
     }
 }

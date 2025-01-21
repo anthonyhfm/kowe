@@ -20,12 +20,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.runBlocking
-import org.cef.browser.CefBrowser
-import org.cef.browser.CefFrame
 import org.cef.browser.CefMessageRouter
 import org.cef.browser.CefRendering
-import org.cef.callback.CefQueryCallback
-import org.cef.handler.CefMessageRouterHandlerAdapter
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class ChromiumWebViewState(
@@ -101,6 +97,7 @@ class ChromiumWebViewState(
 
     override var onPageStart: (String?) -> Unit = { }
     override var onPageFinish: (String?) -> Unit = { }
+    override var onPageError: (WebLoadingState.Error) -> Unit = { }
     override var onMessageReceived: (String) -> Unit = { }
     override var onConsoleMessage: (ConsoleMessage) -> Unit = { }
 

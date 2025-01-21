@@ -28,6 +28,8 @@ class KoweWebViewClient(
             state._loadingState.emit(WebLoadingState.Loading)
         }
 
+        state.onPageStart(url)
+
         super.onPageStarted(view, url, favicon)
     }
 
@@ -36,6 +38,29 @@ class KoweWebViewClient(
             state._loadingState.emit(WebLoadingState.Finished)
         }
 
+        state.onPageFinish(url)
+
         super.onPageFinished(view, url)
+    }
+
+    override fun onReceivedError(
+        view: WebView?,
+        errorCode: Int,
+        description: String?,
+        failingUrl: String?
+    ) {
+        val error = WebLoadingState.Error(
+            url = failingUrl,
+            description = description,
+            errorCode = errorCode
+        )
+
+        CoroutineScope(Dispatchers.IO).launch {
+            state._loadingState.emit(error)
+        }
+
+        state.onPageError(error)
+
+        super.onReceivedError(view, errorCode, description, failingUrl)
     }
 }

@@ -46,12 +46,13 @@ class AppleWebViewState : WebViewState {
     private val _loadingState: MutableStateFlow<WebLoadingState> = MutableStateFlow(WebLoadingState.Unknown)
     override val loadingState: StateFlow<WebLoadingState> = _loadingState.asStateFlow()
 
-    private val coordinator = AppleWebViewCoordinator(_loadingState)
+    private val coordinator = AppleWebViewCoordinator(_loadingState, this)
 
     override var config: WebConfig = WebConfig()
         set(value) {
             wkWebView.configuration.preferences.javaScriptEnabled = value.enableJavaScript
             wkWebView.customUserAgent = value.userAgent
+            wkWebView.configuration.allowsInlineMediaPlayback = value.allowsInlineMediaPlayback
 
             if (value.enableJsBridge) {
                 addBridge()
@@ -83,6 +84,7 @@ class AppleWebViewState : WebViewState {
 
     override var onPageStart: (String?) -> Unit = { }
     override var onPageFinish: (String?) -> Unit = { }
+    override var onPageError: (WebLoadingState.Error) -> Unit = { }
     override var onMessageReceived: (String) -> Unit = { }
     override var onConsoleMessage: (ConsoleMessage) -> Unit = { }
 

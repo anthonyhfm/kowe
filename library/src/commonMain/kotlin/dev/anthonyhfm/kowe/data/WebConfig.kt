@@ -27,5 +27,12 @@ data class WebConfig(
      *
      * Kowe's JavaScript-bridge allows your website to use a window.kowe.postMessage call to send messages to your webview.
      */
-    var enableJsBridge: Boolean = false
+    var enableJsBridge: Boolean = false,
+
+    /**
+     * # Allow inline Media-Playback
+     *
+     * Enable or disable media playback inline in your webview. This currently only applies to iOS.
+     */
+    var allowsInlineMediaPlayback: Boolean = false
 )

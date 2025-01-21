@@ -47,9 +47,17 @@ class KoweLoadHandler(
         errorText: String?,
         failedUrl: String?
     ) {
+        val error = WebLoadingState.Error(
+            url = failedUrl,
+            description = errorText,
+            errorCode = errorCode?.code
+        )
+
         CoroutineScope(Dispatchers.IO).launch {
-            loadingState.emit(WebLoadingState.Error(errorText))
+            loadingState.emit(error)
         }
+
+        state.onPageError(error)
 
         super.onLoadError(browser, frame, errorCode, errorText, failedUrl)
     }
